@@ -1,0 +1,7 @@
+.menu li > a {
+    font-size: 20px;
+}
+
+.submenu ul > li > a {
+    font-size: 18px;
+}
