@@ -1,16 +1,16 @@
 import createSagaMiddleware from "redux-saga";
 import { configureStore } from "@reduxjs/toolkit";
-import { persistStore, persistReducer } from "redux-persist";
+import { persistStore, persistReducer, createMigrate } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
 import rootSaga from "./saga/saga";
-import appReducer from "./modules/reducer";
+import appReducer, { migrations } from "./modules/reducer";
 
 const sagaMiddleware = createSagaMiddleware();
 const middlewares = [sagaMiddleware];
 
 const persistedReducer = persistReducer(
-  { key: "root", storage: storage },
+  { key: "root", storage: storage, migrate: createMigrate(migrations) },
   appReducer.reducer
 );
 

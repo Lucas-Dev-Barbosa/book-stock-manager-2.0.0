@@ -1,10 +1,10 @@
 import Registro from "../Registro";
 
-const ListaRegistros = ({ listaRegistros, onEdit, onDelete, selectPerfis }) => {
+const ListaRegistros = ({ listaRegistros, onEdit }) => {
   return (
     <>
       {listaRegistros.map((item) => (
-        <Registro dadosRegistro={item} selectPerfis={selectPerfis} key={item.id} onEdit={onEdit} onDelete={onDelete} />
+        <Registro dadosRegistro={item} key={item.id} onEdit={onEdit} />
       ))}
     </>
   );

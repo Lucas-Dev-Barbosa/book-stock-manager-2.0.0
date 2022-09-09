@@ -6,8 +6,8 @@ import { useJwt } from "react-jwt";
 const MenuUsuario = () => {
   const dispath = useDispatch();
 
-  const { token } = useSelector((state) => state);
-  const {decodedToken} = useJwt(token);
+  const { token, roles } = useSelector((state) => state);
+  const { decodedToken } = useJwt(token);
 
   function logOutHandler() {
     dispath(slice.actions.signInOut());
@@ -30,33 +30,47 @@ const MenuUsuario = () => {
           aria-labelledby="dropdownMenuLink"
         >
           <li>
-            <p className="dropdown-header">{decodedToken && decodedToken.name}</p>
+            <p className="dropdown-header">
+              {decodedToken && decodedToken.name}
+            </p>
           </li>
           <li>
             <hr className="dropdown-divider" />
           </li>
           <li>
-            <Link to="/perfil-usuario" className="dropdown-item">Perfil</Link>
+            <Link to="/perfil-usuario" className="dropdown-item">
+              Perfil
+            </Link>
           </li>
+          {false && (
+            <li>
+              <hr className="dropdown-divider" />
+            </li>
+          )}
+          {false && (
+            <li>
+              <Link to="/cadastro-usuario" className="dropdown-item">
+                Cadastrar Usuário
+              </Link>
+            </li>
+          )}
+          {roles.some((item) => item === "ROLE_ADMIN") && (
+            <li>
+              <Link to="/lista-usuario" className="dropdown-item">
+                Gerenciar Usuários
+              </Link>
+            </li>
+          )}
+          {roles.some((item) => item === "ROLE_ADMIN") && (
+            <li>
+              <hr className="dropdown-divider" />
+            </li>
+          )}
           <li>
             <button className="dropdown-item" onClick={logOutHandler}>
               Sign out
             </button>
           </li>
-
-          {false && <li>
-            <hr className="dropdown-divider" />
-          </li>}
-          {false && <li>
-            <Link to="/cadastro-usuario" className="dropdown-item">
-              Cadastrar Usuário
-            </Link>
-          </li>}
-          {false && <li>
-            <Link to="/lista-usuario" className="dropdown-item">
-              Gerenciar Usuários
-            </Link>
-          </li>}
         </ul>
       </div>
     </div>

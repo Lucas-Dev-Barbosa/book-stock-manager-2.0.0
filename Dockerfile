@@ -1,6 +1,6 @@
 FROM node:16.17
 
-WORKDIR /bk-front-end
+WORKDIR /bookstock-frontend
 
 COPY package*.json .
 

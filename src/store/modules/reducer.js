@@ -8,6 +8,16 @@ const INITIAL_STATE = {
   messageError: null,
 };
 
+export const migrations = {
+  1: (previousVersionState) => ({
+    token: previousVersionState.token,
+    roles: previousVersionState.roles,
+    signed: previousVersionState.signed,
+    loading: previousVersionState.loading,
+    messageError: previousVersionState.messageError,
+  }),
+};
+
 const slice = createSlice({
   name: "app",
   initialState: INITIAL_STATE,

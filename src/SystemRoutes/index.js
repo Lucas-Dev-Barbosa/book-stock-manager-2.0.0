@@ -89,12 +89,28 @@ const SystemRoutes = () => {
         }
       />
 
-      {false && <Route path="/cadastro-usuario" element={<CadastroUsuario />} />}
+      {false && (
+        <Route path="/cadastro-usuario" element={<CadastroUsuario />} />
+      )}
 
-      {false && <Route path="/lista-usuario">
-        <Route path="" element={<ListaUsuarios />} />
-        <Route path=":buscaUsuario" element={<ListaUsuarios />} />
-      </Route>}
+      <Route path="/lista-usuario">
+        <Route
+          path=""
+          element={
+            <PrivatePage>
+              <ListaUsuarios />
+            </PrivatePage>
+          }
+        />
+        <Route
+          path=":buscaUsuario"
+          element={
+            <PrivatePage>
+              <ListaUsuarios />
+            </PrivatePage>
+          }
+        />
+      </Route>
     </Routes>
   );
 };

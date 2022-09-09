@@ -1,15 +1,11 @@
 import { useState } from "react";
 
-const Registro = ({ dadosRegistro, onEdit, onDelete, selectPerfis }) => {
+const Registro = ({ dadosRegistro, onEdit }) => {
   const [habilitarInput, sethabilitarInput] = useState(false);
   const [edited, setEdited] = useState(false);
 
-  const [perfil, setPerfil] = useState(dadosRegistro.perfil);
   const [nome, setNome] = useState(dadosRegistro.nome);
   const [sobrenome, setSobrenome] = useState(dadosRegistro.sobrenome);
-  const [status, setStatus] = useState(dadosRegistro.ativo);
-
-  const [perfis] = useState(selectPerfis);
 
   function clickEditHandler() {
     if (!habilitarInput) {
@@ -20,17 +16,11 @@ const Registro = ({ dadosRegistro, onEdit, onDelete, selectPerfis }) => {
       if (edited) {
         dadosRegistro.nome = nome;
         dadosRegistro.sobrenome = sobrenome;
-        dadosRegistro.ativo = status;
-        dadosRegistro.perfil = perfil;
 
         onEdit(dadosRegistro);
         setEdited(false);
       }
     }
-  }
-
-  function clickDeleteHandler() {
-    onDelete(dadosRegistro.id);
   }
 
   function changeValueHandler() {
@@ -71,51 +61,15 @@ const Registro = ({ dadosRegistro, onEdit, onDelete, selectPerfis }) => {
           />
         )}
       </td>
+      <td>{dadosRegistro.username}</td>
       <td>
-        {!habilitarInput ? (
-          status ? (
-            "ATIVO"
-          ) : (
-            "INATIVO"
-          )
+        {dadosRegistro.enabled ? (
+          <i
+            className="oi oi-circle-check"
+            style={{ color: "green", fontSize: "25px" }}
+          ></i>
         ) : (
-          <input
-            defaultChecked={status}
-            className="form-check-input"
-            type="checkbox"
-            role="switch"
-            id="flexSwitchCheckDefault"
-            onChange={(e) => {
-              changeValueHandler();
-              setStatus(e.target.checked);
-            }}
-          />
-        )}
-      </td>
-      <td>
-        {!habilitarInput ? (
-          perfil.nome
-        ) : (
-          <select
-            defaultValue={perfil && perfil.id}
-            className="form-select"
-            onChange={(e) => {
-              setPerfil(
-                perfis.find((item) => {
-                  return (Number(item.id) === Number(e.target.value));
-                })
-              );
-              changeValueHandler();
-            }}
-          >
-            {perfis.map((item) => {
-              return (
-                <option value={item.id} key={item.id}>
-                  {item.nome}
-                </option>
-              );
-            })}
-          </select>
+          <i className="oi oi-circle-x" style={{ color: "red", fontSize: "25px" }}></i>
         )}
       </td>
       <td>
@@ -129,20 +83,6 @@ const Registro = ({ dadosRegistro, onEdit, onDelete, selectPerfis }) => {
             style={{ color: "black" }}
             title="Editar"
             className="oi oi-pencil"
-          ></i>
-        </button>
-      </td>
-      <td>
-        <button
-          onClick={clickDeleteHandler}
-          className="btn btn-link"
-          data-bs-toggle={"modal"}
-          data-bs-target="#modalDelete"
-        >
-          <i
-            style={{ color: "black" }}
-            title="Excluir"
-            className="oi oi-delete"
           ></i>
         </button>
       </td>

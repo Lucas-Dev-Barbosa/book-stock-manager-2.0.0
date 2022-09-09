@@ -39,7 +39,7 @@ export function* signIn({ payload }) {
   } catch (err) {
     console.log(err);
 
-    let messageError = err.response.data && err.response.data.error_description;
+    let messageError = (err.response && err.response.data) && err.response.data.error_description;
     if (messageError === "Invalid user credentials") {
       messageError = "Usuário ou senha inválidos";
     }

@@ -1,11 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { useJwt } from "react-jwt";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import slice from "../../store/modules/reducer";
 
 const PrivatePage = ({ children }) => {
-  const [redirecionar, setRedirecionar] = useState(false);
   const dispath = useDispatch();
 
   const { signed, token } = useSelector((state) => state);
@@ -17,11 +16,11 @@ const PrivatePage = ({ children }) => {
   const validaRedirecionamento = useCallback(() => {
     if(token && isExpired) {
       dispath(slice.actions.signInOut());
-      setRedirecionar(true);
+      return;
     }
     if (!signed) {
       navigate("/login");
-      setRedirecionar(true);
+      return;
     }
   }, [token, isExpired, dispath, signed, navigate]);
 
@@ -29,7 +28,7 @@ const PrivatePage = ({ children }) => {
     validaRedirecionamento();
   }, [validaRedirecionamento]);
 
-  return !redirecionar ? children : "";
+  return children;
 };
 
 export default PrivatePage;

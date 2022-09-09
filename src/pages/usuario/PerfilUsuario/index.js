@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import apiAuth from "../../../services/apiAuth";
+import apiUsers from "../../../services/apiUsers";
 import { useSelector } from "react-redux";
 
 const PerfilUsuario = () => {
@@ -9,8 +9,8 @@ const PerfilUsuario = () => {
   const { roles } = useSelector((state) => state);
 
   const getPerfilUsuario = useCallback(async () => {
-    await apiAuth
-      .get("realms/bookstock/protocol/openid-connect/userinfo")
+    await apiUsers
+      .get("user")
       .then((response) => {
         if (response.status === 200) {
           setPerfilUsuario(response.data);
@@ -40,10 +40,24 @@ const PerfilUsuario = () => {
 
       <br />
 
-      <div className="col-md-12">
+      <div className="col-md-6">
         <span>Nome</span>
         <div className="col-sm-10">
-          <span className="fs-3">{perfilUsuario.name}</span>
+          <span className="fs-3">{perfilUsuario.nome}</span>
+        </div>
+      </div>
+
+      <div className="col-md-6">
+        <span>Sobre Nome</span>
+        <div className="col-sm-10">
+          <span className="fs-3">{perfilUsuario.sobrenome}</span>
+        </div>
+      </div>
+
+      <div className="col-md-12">
+        <span>Login</span>
+        <div className="col-sm-10">
+          <span className="fs-3">{perfilUsuario.username}</span>
         </div>
       </div>
 
@@ -54,10 +68,26 @@ const PerfilUsuario = () => {
         </div>
       </div>
 
-      <div className="col-md-12">
+      <div className="col-md-6">
         <span>Perfil</span>
         <div className="col-sm-10">
           <span className="fs-3">{roles}</span>
+        </div>
+      </div>
+
+      <div className="col-md-6">
+        <span>Status</span>
+        <div className="col-sm-10">
+          <span className="fs-3">
+            {perfilUsuario.enabled ? (
+              <i
+                className="oi oi-circle-check"
+                style={{ color: "green", fontSize: "40px" }}
+              ></i>
+            ) : (
+              <i className="oi oi-circle-x" style={{ color: "red" }}></i>
+            )}
+          </span>
         </div>
       </div>
     </div>
