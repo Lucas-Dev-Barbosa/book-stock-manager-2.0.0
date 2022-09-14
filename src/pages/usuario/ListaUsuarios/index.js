@@ -6,10 +6,13 @@ import ControlePaginacao from "../../../layoult/components/ControlePaginacao";
 import { useParams } from "react-router-dom";
 import AlertWarn from "../../../layoult/components/AlertWarn";
 import apiUsers from "../../../services/apiUsers";
+import Spinner from "../../../layoult/components/Spinner";
 
 const ListaUsuarios = () => {
   const [listaItens, setlistaItens] = useState({});
   const [paramsUri, setParamsUri] = useState({ filtro: "", pagina: "" });
+
+  const [loading, setLoading] = useState(true);
 
   const [registroEditado, setRegistroEditado] = useState();
 
@@ -17,6 +20,8 @@ const ListaUsuarios = () => {
 
   //Busca a lista dos usuários na API
   const getListaUsuario = useCallback(async () => {
+    setLoading(true);
+
     await apiUsers
       .get(
         "paginacao?filtro=" +
@@ -30,12 +35,14 @@ const ListaUsuarios = () => {
       )
       .then((response) => {
         setlistaItens(response.data);
+        setLoading(false);
       })
       .catch((err) => {
         toast.error("Erro ao buscar a lista de usuários", {
           position: toast.POSITION.TOP_RIGHT,
         });
         console.log("Ocorreu um erro ao buscar os dados: " + err);
+        setLoading(false);
       });
   }, [paramsUri, buscaUsuario]);
 
@@ -88,18 +95,20 @@ const ListaUsuarios = () => {
 
       <Filtro onSend={setParamsUri} label="Nome/Sobrenome/E-mail" />
 
-      {listaItens.usuario && listaItens.usuario.length > 0 && (
+      {loading && <Spinner />}
+
+      {!loading && listaItens.usuario && listaItens.usuario.length > 0 && (
         <Table
           listaRegistros={listaItens.usuario}
           onEdit={editHandler}
         />
       )}
-      {!listaItens.usuario ||
+      {!loading && (!listaItens.usuario ||
         (listaItens.usuario.length < 1 && (
           <p className="col">Não existem usuários cadastrados no sistema!</p>
-        ))}
+        )))}
 
-      {listaItens.usuario && listaItens.usuario.length > 0 && (
+      {!loading && listaItens.usuario && listaItens.usuario.length > 0 && (
         <ControlePaginacao
           onSend={setParamsUri}
           paginacao={{

@@ -3,7 +3,8 @@ import { useState, useEffect, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import AlertWarn from "../../../layoult/components/AlertWarn";
-import api from "../../../services/api";
+import apiLivros from "../../../services/apiLivros";
+import Spinner from "../../../layoult/components/Spinner";
 
 function formataData(data) {
   var d = new Date(data);
@@ -16,19 +17,25 @@ const DetalhamentoLivro = () => {
   const { idLivro } = useParams();
   const [detalheLivro, setDetalheLivro] = useState();
 
+  const [loading, setLoading] = useState(true);
+
   const { roles } = useSelector((state) => state);
 
   const navigate = useNavigate();
 
   //Busca os detalhes do livro na API
   const getDetalhamentoLivro = useCallback(async () => {
-    await api
+    setLoading(true);
+
+    await apiLivros
       .get(`livros/${idLivro}`)
       .then((response) => {
         setDetalheLivro(response.data);
+        setLoading(false);
       })
       .catch((err) => {
         console.log("Ocorreu um erro ao buscar os dados: " + err);
+        setLoading(false);
       });
   }, [idLivro]);
 
@@ -37,7 +44,7 @@ const DetalhamentoLivro = () => {
   }, [getDetalhamentoLivro]);
 
   function deleteHandler() {
-    api
+    apiLivros
       .delete(`livros/${detalheLivro.id}`)
       .then((response) => {
         if (response.status === 200) {
@@ -73,7 +80,10 @@ const DetalhamentoLivro = () => {
           <div className="col-auto">
             <h2>Detalhes do livro</h2>
           </div>
-          <div className="col-auto dropend">
+
+          {loading && <Spinner />}
+
+          {!loading && <div className="col-auto dropend">
             <a
               className="btn btn-secondary dropdown-toggle"
               href="/#"
@@ -87,7 +97,7 @@ const DetalhamentoLivro = () => {
             <ul className="dropdown-menu" aria-labelledby="dropdownMenuLink">
               <li>
                 <Link
-                  to={`/estoque/${detalheLivro.titulo}`}
+                  to={`/estoque/${detalheLivro.id}`}
                   className="dropdown-item"
                 >
                   <i className="oi oi-folder"></i> Estoque
@@ -121,12 +131,12 @@ const DetalhamentoLivro = () => {
                 </li>
               )}
             </ul>
-          </div>
+          </div>}
         </div>
 
         <br />
 
-        <div className="row g-0">
+        {!loading && <div className="row g-0">
           <div className="col-md-4">
             <img
               src={"data:image/jpeg;base64," + detalheLivro.fotoCapa}
@@ -214,7 +224,7 @@ const DetalhamentoLivro = () => {
               <p className="card-text">{detalheLivro.sinopse}</p>
             </div>
           </div>
-        </div>
+        </div>}
       </div>
     )
   );

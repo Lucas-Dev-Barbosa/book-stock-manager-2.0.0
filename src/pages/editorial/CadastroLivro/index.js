@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import NumberFormat from "react-number-format";
 import classes from "./Form.module.css";
 import AlertError from "../../../layoult/components/AlertError";
-import api from "../../../services/api";
+import apiLivros from "../../../services/apiLivros";
 import ButtonForm from "../../../layoult/components/ButtonForm";
 
 const detalheLivroDefault = {
@@ -63,7 +63,7 @@ const CadastroLivro = () => {
 
   //Busca as informacoes detalhadas do livro na API
   const getDetalheLivro = useCallback(async () => {
-    await api
+    await apiLivros
       .get(`livros/${idLivro}`)
       .then((response) => {
         setDetalheLivro(response.data);
@@ -96,12 +96,9 @@ const CadastroLivro = () => {
 
     let livroJson = processaDadosLivro();
 
-    let path = "livros";
-    let apiLivro = idLivro
-      ? api.put(path, livroJson)
-      : api.post(path, livroJson);
+    let path = "livros/";
 
-    apiLivro
+    (idLivro ? apiLivros.put(path, livroJson) : apiLivros.post(path, livroJson))
       .then((response) => {
         if (response.status === 200 || response.status === 201) {
           toast.success("Informações do Livro salvas com sucesso", {
@@ -109,7 +106,7 @@ const CadastroLivro = () => {
           });
 
           navigate(
-            `/detalhamento-livro/${idLivro ? idLivro : response.data.livro.id}`
+            `/detalhamento-livro/${idLivro ? idLivro : response.data.id}`
           );
 
           setLoading(false);
@@ -312,7 +309,11 @@ const CadastroLivro = () => {
           ></textarea>
         </div>
 
-        <ButtonForm value={idLivro ? "Editar" : "Cadastrar"} valueLoading=" Enviando..." statusLoading={loading} />
+        <ButtonForm
+          value={idLivro ? "Editar" : "Cadastrar"}
+          valueLoading=" Enviando..."
+          statusLoading={loading}
+        />
       </form>
     </div>
   );

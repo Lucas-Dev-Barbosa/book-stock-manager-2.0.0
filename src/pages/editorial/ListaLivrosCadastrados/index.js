@@ -2,16 +2,21 @@ import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import ControlePaginacao from "../../../layoult/components/ControlePaginacao";
 import Filtro from "../../../layoult/components/Filtro";
-import api from "../../../services/api";
+import Spinner from "../../../layoult/components/Spinner";
+import apiLivros from "../../../services/apiLivros";
 import ListaItens from "./ListaItens";
 
-const ListaLivrosCadastrados = (props) => {
+const ListaLivrosCadastrados = () => {
   const [listaItens, setlistaItens] = useState({});
   const [paramsUri, setParamsUri] = useState({ filtro: "", pagina: "" });
 
+  const [loading, setLoading] = useState(true);
+
   //Busca a lista dos livros na API
   const getListaLivros = useCallback(async () => {
-    await api
+    setLoading(true);
+
+    await apiLivros
       .get(
         "livros/paginacao?filtro=" +
           (paramsUri.filtro ? paramsUri.filtro : "") +
@@ -20,12 +25,14 @@ const ListaLivrosCadastrados = (props) => {
       )
       .then((response) => {
         setlistaItens(response.data);
+        setLoading(false);
       })
       .catch((err) => {
         toast.error("Erro ao buscar a lista no estoque", {
           position: toast.POSITION.TOP_RIGHT,
         });
         console.log("Ocorreu um erro ao buscar os dados: " + err);
+        setLoading(false);
       });
   }, [paramsUri]);
 
@@ -41,16 +48,18 @@ const ListaLivrosCadastrados = (props) => {
 
       <Filtro onSend={setParamsUri} label="Título do livro" />
 
+      {loading && <Spinner />}
+
       <div className="row row-cols-1 row-cols-md-3 g-4">
-        {listaItens.content && listaItens.content.length > 0 && (
+        {!loading && listaItens.content && listaItens.content.length > 0 && (
           <ListaItens listaItens={listaItens.content} />
         )}
-        {(!listaItens.content || listaItens.content.length < 1) && (
+        {!loading && (!listaItens.content || listaItens.content.length < 1) && (
           <p className="col">Não existem livros cadastrados no estoque!</p>
         )}
       </div>
 
-      {listaItens.content && listaItens.content.length > 0 && (
+      {!loading && listaItens.content && listaItens.content.length > 0 && (
         <ControlePaginacao
           onSend={setParamsUri}
           paginacao={{

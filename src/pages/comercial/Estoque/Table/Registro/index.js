@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import NumberFormat from "react-number-format";
+import apiLivros from "../../../../../services/apiLivros";
+import { toast } from "react-toastify";
 
 const Registro = ({ dadosRegistro, onEdit }) => {
   const [habilitarInput, sethabilitarInput] = useState(false);
@@ -10,7 +12,28 @@ const Registro = ({ dadosRegistro, onEdit }) => {
   const [emEstoque, setEmEstoque] = useState(dadosRegistro.emEstoque);
   const [vendidos, setVendidos] = useState(dadosRegistro.vendidos);
 
+  const [detalheLivro, setDetalheLivro] = useState({});
+
   const { roles } = useSelector((state) => state);
+
+  const preencheDetalhamentoLivro = useCallback(async () => {
+    await apiLivros
+      .get(`livros/${dadosRegistro.idLivro}`)
+      .then((response) => {
+        setDetalheLivro(response.data);
+      })
+      .catch((err) => {
+        let mensagemErro = "Ocorreu um erro ao buscar os dados do livro ";
+        console.log(mensagemErro + err);
+        toast.success(mensagemErro, {
+          position: toast.POSITION.TOP_RIGHT,
+        });
+      });
+  }, [dadosRegistro]);
+
+  useEffect(() => {
+    preencheDetalhamentoLivro();
+  }, [preencheDetalhamentoLivro]);
 
   function clickEditHandler() {
     if (!habilitarInput) {
@@ -35,7 +58,7 @@ const Registro = ({ dadosRegistro, onEdit }) => {
   return (
     <tr>
       <th scope="row">{dadosRegistro.id}</th>
-      <td>{dadosRegistro.livro.titulo}</td>
+      <td>{detalheLivro.titulo}</td>
       <td>
         {!habilitarInput ? (
           emEstoque
@@ -90,7 +113,7 @@ const Registro = ({ dadosRegistro, onEdit }) => {
       )}
       <td>
         <Link
-          to={`/detalhamento-livro/${dadosRegistro.livro.id}`}
+          to={`/detalhamento-livro/${detalheLivro.id}`}
           className="btn btn-link"
         >
           <i

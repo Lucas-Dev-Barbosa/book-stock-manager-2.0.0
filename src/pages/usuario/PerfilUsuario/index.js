@@ -2,19 +2,25 @@ import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import apiUsers from "../../../services/apiUsers";
 import { useSelector } from "react-redux";
+import Spinner from "../../../layoult/components/Spinner";
 
 const PerfilUsuario = () => {
   const [perfilUsuario, setPerfilUsuario] = useState({});
 
+  const [loading, setLoading] = useState(true);
+
   const { roles } = useSelector((state) => state);
 
   const getPerfilUsuario = useCallback(async () => {
+    setLoading(true);
+
     await apiUsers
       .get("user")
       .then((response) => {
         if (response.status === 200) {
           setPerfilUsuario(response.data);
         }
+        setLoading(false);
       })
       .catch((err) => {
         toast.error("Erro ao buscar os dados do servidor", {
@@ -22,6 +28,7 @@ const PerfilUsuario = () => {
         });
 
         console.log("Erro na requisição: " + err);
+        setLoading(false);
       });
   }, []);
 
@@ -29,7 +36,9 @@ const PerfilUsuario = () => {
     getPerfilUsuario();
   }, [getPerfilUsuario]);
 
-  return (
+  return loading ? (
+    <Spinner />
+  ) : (
     <div className="row g-3 mx-auto" style={{ width: "40rem" }}>
       <h2>Perfil do Usuário</h2>
 

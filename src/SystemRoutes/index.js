@@ -4,7 +4,6 @@ import DetalhamentoLivro from "../pages/editorial/DetalhamentoLivro";
 import ListaLivrosCadastrados from "../pages/editorial/ListaLivrosCadastrados";
 import Home from "../pages/Home";
 import CadastroLivro from "../pages/editorial/CadastroLivro";
-import CadastroUsuario from "../pages/usuario/CadastroUsuario";
 import ListaUsuarios from "../pages/usuario/ListaUsuarios";
 import Login from "../pages/Login";
 import PrivatePage from "./PrivatePage";
@@ -71,7 +70,7 @@ const SystemRoutes = () => {
           }
         />
         <Route
-          path=":tituloLivro"
+          path=":idLivro"
           element={
             <PrivatePage>
               <Estoque />
@@ -88,11 +87,7 @@ const SystemRoutes = () => {
           </PrivatePage>
         }
       />
-
-      {false && (
-        <Route path="/cadastro-usuario" element={<CadastroUsuario />} />
-      )}
-
+      
       <Route path="/lista-usuario">
         <Route
           path=""

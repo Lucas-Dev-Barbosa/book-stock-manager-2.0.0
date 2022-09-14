@@ -1,42 +1,52 @@
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import Filtro from "../../../layoult/components/Filtro";
 import Table from "./Table";
 import ControlePaginacao from "../../../layoult/components/ControlePaginacao";
 import { useParams } from "react-router-dom";
 import AlertWarn from "../../../layoult/components/AlertWarn";
-import api from "../../../services/api";
+import apiEstoque from "../../../services/apiEstoque";
+import Spinner from "../../../layoult/components/Spinner";
 
 const Estoque = () => {
-  const [listaItens, setlistaItens] = useState({});
-  const [paramsUri, setParamsUri] = useState({ filtro: "", pagina: "" });
+  const [listaItens, setlistaItens] = useState({
+    content: [],
+    number: 0,
+    totalPages: 1,
+  });
+  const [paramsUri, setParamsUri] = useState({ pagina: "" });
   const [registroEditado, setRegistroEditado] = useState();
+  const [loading, setLoading] = useState(true);
 
-  const { tituloLivro } = useParams();
+  const { idLivro } = useParams();
 
   //Busca a lista dos registros no estoque na API
   const getListaEstoque = useCallback(async () => {
-    await api
-      .get(
-        "estoque/paginacao?filtro=" +
-          (tituloLivro && !paramsUri.filtro
-            ? tituloLivro
-            : paramsUri.filtro
-            ? paramsUri.filtro
-            : "") +
-          "&pagina=" +
-          (paramsUri.pagina ? paramsUri.pagina : "")
-      )
+    setLoading(true);
+
+    let url = !idLivro
+      ? "estoque/paginacao?pagina=" + (paramsUri.pagina ? paramsUri.pagina : "")
+      : "estoque/livro/" + idLivro;
+
+    await apiEstoque
+      .get(url)
       .then((response) => {
-        setlistaItens(response.data);
+        if (!response.data.content) {
+          setlistaItens((prevState) => {
+            return { ...prevState, content: [response.data] };
+          });
+        } else {
+          setlistaItens(response.data);
+        }
+        setLoading(false);
       })
       .catch((err) => {
         toast.error("Erro ao buscar a lista no estoque", {
           position: toast.POSITION.TOP_RIGHT,
         });
         console.log("Ocorreu um erro ao buscar os dados: " + err);
+        setLoading(false);
       });
-  }, [paramsUri, tituloLivro]);
+  }, [paramsUri, idLivro]);
 
   useEffect(() => {
     getListaEstoque();
@@ -45,14 +55,15 @@ const Estoque = () => {
   //Atualiza os dados do livro no estoque
   function updateHandler() {
     if (registroEditado) {
-      api
-        .put("estoque", registroEditado)
+      apiEstoque
+        .put("estoque/", registroEditado)
         .then((response) => {
           if (response.status === 200) {
             toast.success("Informações do Estoque salvas com sucesso", {
               position: toast.POSITION.TOP_RIGHT,
             });
           }
+          getListaEstoque();
         })
         .catch((err) => {
           toast.error("Erro ao enviar os dados do estoque", {
@@ -62,8 +73,7 @@ const Estoque = () => {
           console.log("Erro na requisição: " + err);
         });
 
-      setRegistroEditado();
-      getListaEstoque();
+        setRegistroEditado();
     }
   }
 
@@ -82,18 +92,18 @@ const Estoque = () => {
 
       <h2>Estoque</h2>
 
+      {loading && <Spinner />}
+
       <br />
 
-      <Filtro onSend={setParamsUri} label="Título do livro" />
-
-      {listaItens.content && listaItens.content.length > 0 && (
+      {!loading && listaItens.content && (
         <Table listaRegistros={listaItens.content} onEdit={editHandler} />
       )}
-      {(!listaItens.content || listaItens.content.length < 1) && (
+      {!loading && (!listaItens.content || listaItens.content.length < 1) && (
         <p className="col">O estoque se encontra vazio!</p>
       )}
 
-      {listaItens.content && listaItens.content.length > 0 && (
+      {!loading && listaItens.content && listaItens.content.length > 0 && (
         <ControlePaginacao
           onSend={setParamsUri}
           paginacao={{
