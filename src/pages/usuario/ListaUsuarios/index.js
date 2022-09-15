@@ -61,6 +61,8 @@ const ListaUsuarios = () => {
               position: toast.POSITION.TOP_RIGHT,
             });
           }
+
+          getListaUsuario();
         })
         .catch((err) => {
           toast.error("Erro ao enviar os dados do usuário", {
@@ -71,7 +73,6 @@ const ListaUsuarios = () => {
         });
 
       setRegistroEditado();
-      getListaUsuario();
     }
   }
 

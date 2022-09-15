@@ -64,7 +64,9 @@ const DetalhamentoLivro = () => {
       });
   }
 
-  return (
+  return loading ? (
+    <Spinner />
+  ) : (
     detalheLivro && (
       <div style={{ width: "70rem" }}>
         <AlertWarn
@@ -81,9 +83,7 @@ const DetalhamentoLivro = () => {
             <h2>Detalhes do livro</h2>
           </div>
 
-          {loading && <Spinner />}
-
-          {!loading && <div className="col-auto dropend">
+          <div className="col-auto dropend">
             <a
               className="btn btn-secondary dropdown-toggle"
               href="/#"
@@ -131,12 +131,12 @@ const DetalhamentoLivro = () => {
                 </li>
               )}
             </ul>
-          </div>}
+          </div>
         </div>
 
         <br />
 
-        {!loading && <div className="row g-0">
+        <div className="row g-0">
           <div className="col-md-4">
             <img
               src={"data:image/jpeg;base64," + detalheLivro.fotoCapa}
@@ -224,7 +224,7 @@ const DetalhamentoLivro = () => {
               <p className="card-text">{detalheLivro.sinopse}</p>
             </div>
           </div>
-        </div>}
+        </div>
       </div>
     )
   );
