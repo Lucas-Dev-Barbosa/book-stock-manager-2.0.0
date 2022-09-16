@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import NumberFormat from "react-number-format";
 import apiLivros from "../../../../../services/apiLivros";
 import { toast } from "react-toastify";
+import Spinner from "../../../../../layoult/components/Spinner";
 
 const Registro = ({ dadosRegistro, onEdit }) => {
   const [habilitarInput, sethabilitarInput] = useState(false);
@@ -14,13 +15,18 @@ const Registro = ({ dadosRegistro, onEdit }) => {
 
   const [detalheLivro, setDetalheLivro] = useState({});
 
+  const [loading, setLoading] = useState(true);
+
   const { roles } = useSelector((state) => state);
 
   const preencheDetalhamentoLivro = useCallback(async () => {
+    setLoading(true);
+    
     await apiLivros
       .get(`livros/${dadosRegistro.idLivro}`)
       .then((response) => {
         setDetalheLivro(response.data);
+        setLoading(false);
       })
       .catch((err) => {
         let mensagemErro = "Ocorreu um erro ao buscar os dados do livro ";
@@ -28,6 +34,7 @@ const Registro = ({ dadosRegistro, onEdit }) => {
         toast.success(mensagemErro, {
           position: toast.POSITION.TOP_RIGHT,
         });
+        setLoading(false);
       });
   }, [dadosRegistro]);
 
@@ -58,7 +65,7 @@ const Registro = ({ dadosRegistro, onEdit }) => {
   return (
     <tr>
       <th scope="row">{dadosRegistro.id}</th>
-      <td>{detalheLivro.titulo}</td>
+      <td>{loading ? <Spinner height="1rem" width="1rem" color="text-dark" /> : detalheLivro.titulo}</td>
       <td>
         {!habilitarInput ? (
           emEstoque
