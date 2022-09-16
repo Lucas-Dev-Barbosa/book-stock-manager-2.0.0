@@ -4,7 +4,11 @@ const Filtro = ({ onSend, label }) => {
   const filtroRef = useRef();
 
   function onSendHandler() {
-    onSend({ filtro: filtroRef.current.value });
+    onSend({
+      filtro: filtroRef.current.value
+        ? filtroRef.current.value.trim()
+        : filtroRef.current.value,
+    });
   }
 
   return (
@@ -21,7 +25,15 @@ const Filtro = ({ onSend, label }) => {
           type="text"
           ref={filtroRef}
           className="form-control"
-          onChange={onSendHandler}
+          onKeyUp={(ev) => {
+            var typingTimer;
+            var doneTypingInterval = 1000;
+
+            clearTimeout(typingTimer);
+            if (ev.target.value) {
+              typingTimer = setTimeout(onSendHandler, doneTypingInterval);
+            }
+          }}
           autoFocus
         />
       </div>

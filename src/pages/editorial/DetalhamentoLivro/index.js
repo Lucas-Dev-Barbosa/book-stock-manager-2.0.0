@@ -68,7 +68,7 @@ const DetalhamentoLivro = () => {
     <Spinner />
   ) : (
     detalheLivro && (
-      <div style={{ width: "70rem" }}>
+      <div className="row g-3 mx-auto" style={{ width: "70rem" }}>
         <AlertWarn
           titulo={"Excluir livro"}
           mensagem={
@@ -136,7 +136,7 @@ const DetalhamentoLivro = () => {
 
         <br />
 
-        <div className="row g-0">
+        <div className="row g-2">
           <div className="col-md-4">
             <img
               src={"data:image/jpeg;base64," + detalheLivro.fotoCapa}
@@ -144,6 +144,7 @@ const DetalhamentoLivro = () => {
               alt="Imagem Capa"
             />
           </div>
+
           <div className="col-md-8">
             <div className="card-body">
               <h3 className="card-title">{detalheLivro.titulo}</h3>
